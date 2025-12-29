@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+  # Service de la Base de Données
+  db-ega:
+    image: mysql:8.0
+    container_name: mysql-ega
+    environment:
+      MYSQL_DATABASE: ega_db
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3307:3306" # On utilise 3307 pour ne pas entrer en conflit si tu as déjà un MySQL local
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  # Service de l'Application Spring Boot
+  app-ega:
+    build: .
+    container_name: spring-ega
+    ports:
+      - "8080:8080"
+    depends_on:
+      db-ega:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db-ega:3306/ega_db?createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
