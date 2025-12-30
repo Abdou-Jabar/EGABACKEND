@@ -27,14 +27,14 @@ public class Transaction {
     private LocalDateTime dateTransaction;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "type")
+    @Column(name = "type", nullable = false, updatable = false)
     private TypeTransaction type;
 
     @ManyToOne
-    @JoinColumn(name = "compte_source_id")
+    @JoinColumn(name = "compte_source_id", updatable = false, nullable = false)
     private Compte compteSource;
 
     @ManyToOne
-    @JoinColumn(name = "compte_destination_id")
+    @JoinColumn(name = "compte_destination_id", updatable = false, nullable = false)
     private Compte compteDestination;
 }

@@ -10,8 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -33,7 +33,7 @@ public class Client {
     private String prenom;
 
     @Column(name = "date_naissance", nullable = false)
-    private Date dateNaissance;
+    private LocalDate dateNaissance;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "sexe", nullable = false)

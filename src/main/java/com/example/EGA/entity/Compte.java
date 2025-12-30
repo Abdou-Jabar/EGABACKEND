@@ -32,7 +32,7 @@ public class Compte {
     @Column(name = "est_supprime")
     private boolean estSupprime;
 
-    @Column(name = "solde")
+    @Column(name = "solde", nullable = false)
     private Double solde = 0.0;
 
     @PrePersist
