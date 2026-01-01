@@ -56,8 +56,8 @@ public class ClientController {
 
     //Supprimer logiquement un client
     @PutMapping("client/supprimer/{id}")
-    public ResponseEntity<Void> supprimer(@PathVariable Long id) {
+    public ResponseEntity<String> supprimer(@PathVariable Long id) {
         clientService.supprimerClient(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok("Client supprimé avec succès");
     }
 }

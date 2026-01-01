@@ -63,6 +63,6 @@ public class CompteController {
     @PutMapping("/compte/supprimer/{id}")
     public ResponseEntity<String> supprimer(@PathVariable String id) {
         compteService.supprimerCompte(id);
-        return ResponseEntity.ok("Compte supprimé logiquement avec succès");
+        return ResponseEntity.ok("Compte supprimé avec succès");
     }
 }

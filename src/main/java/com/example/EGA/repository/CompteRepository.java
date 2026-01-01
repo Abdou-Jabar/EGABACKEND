@@ -19,5 +19,4 @@ public interface CompteRepository extends JpaRepository<Compte, String> {
 
     Optional<Compte> findByIdAndEstSupprimeFalseAndClientEstSupprimeFalse(String id);
 
-
 }

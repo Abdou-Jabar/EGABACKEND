@@ -28,8 +28,7 @@ public class TransactionService {
 
     @Transactional
     public void effectuerDepot(String numDest, Double montant) {
-        if (montant < 500)
-            throw new RuntimeException("Le montant minimal pour un dépôt est de 500 F");
+        if (montant < 500) throw new RuntimeException("Le montant minimal pour un dépôt est de 500 F");
 
         Compte dest = compteRepository.findByIdAndEstSupprimeFalse(numDest)
                 .orElseThrow(() -> new RuntimeException("Compte destination introuvable ou supprimé"));
@@ -44,20 +43,17 @@ public class TransactionService {
 
         transactionRepository.save(t);
         compteRepository.save(dest);
-
         emailService.envoyerDepot(dest, montant);
     }
 
     @Transactional
     public void effectuerRetrait(String numSource, Double montant) {
-        if (montant < 500)
-            throw new RuntimeException("Le montant minimal pour un retrait est de 500 F");
+        if (montant < 500) throw new RuntimeException("Le montant minimal pour un retrait est de 500 F");
 
         Compte source = compteRepository.findByIdAndEstSupprimeFalse(numSource)
                 .orElseThrow(() -> new RuntimeException("Compte source introuvable"));
 
-        if (source.getSolde() < montant)
-            throw new RuntimeException("Solde insuffisant");
+        if (source.getSolde() < montant) throw new RuntimeException("Solde insuffisant");
 
         source.setSolde(source.getSolde() - montant);
 
@@ -74,8 +70,7 @@ public class TransactionService {
 
     @Transactional
     public void effectuerVirement(String numSource, String numDest, Double montant) {
-        if (montant < 500)
-            throw new RuntimeException("Le montant minimal pour un virement est de 500 F");
+        if (montant < 500) throw new RuntimeException("Le montant minimal pour un virement est de 500 F");
 
         Compte source = compteRepository.findByIdAndEstSupprimeFalse(numSource)
                 .orElseThrow(() -> new RuntimeException("Compte source introuvable"));
@@ -83,8 +78,7 @@ public class TransactionService {
         Compte dest = compteRepository.findByIdAndEstSupprimeFalseAndClientEstSupprimeFalse(numDest)
                 .orElseThrow(() -> new RuntimeException("Compte destination introuvable"));
 
-        if (source.getSolde() < montant)
-            throw new RuntimeException("Solde insuffisant");
+        if (source.getSolde() < montant) throw new RuntimeException("Solde insuffisant");
 
         source.setSolde(source.getSolde() - montant);
         dest.setSolde(dest.getSolde() + montant);
@@ -102,11 +96,31 @@ public class TransactionService {
         emailService.envoyerVirement(source, dest, montant);
     }
 
-    public List<Transaction> obtenirReleve(String numeroCompte, LocalDateTime debut, LocalDateTime fin) {
-        // On vérifie si le compte existe avant de chercher les transactions
-        compteRepository.findByIdAndEstSupprimeFalse(numeroCompte)
+    public List<Transaction> obtenirReleve(String numeroCompte) {
+        compteRepository.findByIdAndEstSupprimeFalseAndClientEstSupprimeFalse(numeroCompte)
                 .orElseThrow(() -> new RuntimeException("Compte introuvable"));
 
-        return transactionRepository.findReleve(numeroCompte, debut, fin);
+        return transactionRepository.findReleve(numeroCompte);
+    }
+
+    public List<Transaction> obtenirReleveParPeriode(String numeroCompte, LocalDateTime debut, LocalDateTime fin) {
+        compteRepository.findByIdAndEstSupprimeFalseAndClientEstSupprimeFalse(numeroCompte)
+                .orElseThrow(() -> new RuntimeException("Compte introuvable"));
+
+        return transactionRepository.findReleveByPeriod(numeroCompte, debut, fin);
+    }
+
+    public List<Transaction> obtenirTransactionsParCompte(String numCompte) {
+        compteRepository.findByIdAndEstSupprimeFalseAndClientEstSupprimeFalse(numCompte)
+                .orElseThrow(() -> new RuntimeException("Compte introuvable ou supprimé"));
+
+        return transactionRepository.findReleve(numCompte);
+    }
+
+    public List<Transaction> obtenirTransactionsParPeriode(String num, LocalDateTime debut, LocalDateTime fin) {
+        compteRepository.findByIdAndEstSupprimeFalse(num)
+                .orElseThrow(() -> new RuntimeException("Compte introuvable ou supprimé"));
+
+        return transactionRepository.findReleveByPeriod(num, debut, fin);
     }
 }

@@ -21,22 +21,15 @@ public class ClientService {
     public void supprimerClient(Long id) {
         Client client = clientRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Client non trouvé"));
-        for (Compte c : client.getComptes()) {
-            c.setEstSupprime(true);
-        }
+        for (Compte c : client.getComptes()) c.setEstSupprime(true);
         client.setEstSupprime(true);
         clientRepository.save(client);
     }
 
     @Transactional
     public Client creerClientAvecCompte(Client client, Type typeCompte) {
-
-        // Sauvegarder le client
         Client savedClient = clientRepository.save(client);
-
-        // Créer automatiquement un compte pour lui
         compteService.creerCompte(savedClient.getId(), typeCompte);
-
         return savedClient;
     }
 }

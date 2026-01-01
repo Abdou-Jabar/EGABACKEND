@@ -22,6 +22,7 @@ public class CompteService {
         this.clientRepository = clientRepository;
         this.emailService = emailService;
     }
+
     public Compte creerCompte(Long clientId, Type typeCompte) {
 
         Client client = clientRepository

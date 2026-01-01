@@ -1,6 +1,6 @@
 package com.example.EGA.entity;
 
-import com.example.EGA.model.UserRole;
+import com.example.EGA.model.AdminRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,5 +29,5 @@ public class Admin {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
-    private UserRole role;
+    private AdminRole role;
 }

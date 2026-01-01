@@ -1,5 +1,5 @@
 package com.example.EGA.model;
 
-public enum UserRole {
+public enum AdminRole {
     SUPER_ADMIN, ADMIN;
 }
