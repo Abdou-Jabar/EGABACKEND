@@ -1,28 +1,34 @@
 package com.example.EGA.controller;
 
-import com.example.EGA.dto.AjouterClientDTO;
+import com.example.EGA.dto.AjouterCompteDTO;
+import com.example.EGA.dto.ListeClientDTO;
 import com.example.EGA.dto.ModifierClientDTO;
 import com.example.EGA.entity.Client;
+import com.example.EGA.entity.Compte;
 import com.example.EGA.repository.ClientRepository;
+import com.example.EGA.repository.CompteRepository;
 import com.example.EGA.service.ClientService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 public class ClientController {
     private final ClientRepository clientRepository;
+    private final CompteRepository compteRepository;
 
     private final ClientService clientService;
-    public ClientController(ClientService clientService, ClientRepository clientRepository) {
+    public ClientController(ClientService clientService, ClientRepository clientRepository, CompteRepository compteRepository) {
         this.clientService = clientService;
         this.clientRepository = clientRepository;
+        this.compteRepository = compteRepository;
     }
 
     //Lister tous les clients
     @GetMapping("/client")
-    public List<Client> findAll(){
+    public List<ListeClientDTO> findAll(){
         return clientRepository.findClientsWithActiveComptes();
     }
 
@@ -32,8 +38,13 @@ public class ClientController {
         return clientRepository.findById(id).orElseThrow(() -> new RuntimeException("Client non trouvé avec id = " + id));
     }
 
+    @GetMapping("/client/{id}/comptes")
+    public List<Compte> getComptesByClient(@PathVariable Long id) {
+        return compteRepository.findActiveComptesByClientId(id);
+    }
+
     @PostMapping("/client/ajouter")
-    public Client ajouter(@RequestBody AjouterClientDTO dto){
+    public Client ajouter(@RequestBody AjouterCompteDTO dto){
         return clientService.creerClientAvecCompte(
                 dto.getClient(),
                 dto.getTypeCompte()

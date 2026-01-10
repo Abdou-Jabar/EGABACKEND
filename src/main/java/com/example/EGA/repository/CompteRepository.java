@@ -1,8 +1,10 @@
 package com.example.EGA.repository;
 
 import com.example.EGA.entity.Compte;
+import com.example.EGA.model.Type;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,4 +21,18 @@ public interface CompteRepository extends JpaRepository<Compte, String> {
 
     Optional<Compte> findByIdAndEstSupprimeFalseAndClientEstSupprimeFalse(String id);
 
+    @Query("""
+        SELECT cp 
+        FROM Compte cp 
+        WHERE cp.client.id = :clientId 
+        AND cp.estSupprime = false
+    """)
+    List<Compte> findActiveComptesByClientId(@Param("clientId") Long clientId);
+
+    long countByTypeAndEstSupprimeFalse(Type type);
+
+    @Query("SELECT SUM(c.solde) FROM Compte c WHERE c.type = :type AND c.estSupprime = false")
+    Double sumSoldeByType(@Param("type") Type type);
+
+    long countByEstSupprimeFalse();
 }

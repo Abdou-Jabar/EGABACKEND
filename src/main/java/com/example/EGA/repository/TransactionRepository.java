@@ -26,4 +26,9 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
           \s""")
     List<Transaction> findReleveByPeriod(String num, LocalDateTime debut, LocalDateTime fin);
 
+    @Query("SELECT SUM(t.montant) FROM Transaction t")
+    Double sumAllMontants();
+
+    List<Transaction> findTop5ByOrderByDateTransactionDesc();
+
 }
