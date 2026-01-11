@@ -1,7 +1,6 @@
 package com.example.EGA.controller;
 
 import com.example.EGA.dto.AjouterCompteDTO;
-import com.example.EGA.dto.ListeClientDTO;
 import com.example.EGA.dto.ModifierClientDTO;
 import com.example.EGA.entity.Client;
 import com.example.EGA.entity.Compte;
@@ -28,7 +27,7 @@ public class ClientController {
 
     //Lister tous les clients
     @GetMapping("/client")
-    public List<ListeClientDTO> findAll(){
+    public List<Client> findAll(){
         return clientRepository.findClientsWithActiveComptes();
     }
 
