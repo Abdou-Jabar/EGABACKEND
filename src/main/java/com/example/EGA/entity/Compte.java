@@ -2,6 +2,7 @@ package com.example.EGA.entity;
 
 import com.example.EGA.model.Type;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -40,9 +41,9 @@ public class Compte {
         this.dateCreation = LocalDateTime.now();
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id")
-    @JsonBackReference
+    @JsonIgnoreProperties({"comptes", "autreChampASupprimer"})
     private Client client;
 
 }

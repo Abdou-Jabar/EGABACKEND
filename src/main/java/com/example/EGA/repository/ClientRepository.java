@@ -1,5 +1,6 @@
 package com.example.EGA.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.example.EGA.entity.Client;
 
-public interface ClientRepository extends JpaRepository<Client,Long> {
+public interface    ClientRepository extends JpaRepository<Client,Long> {
         @Query("""
         SELECT c
         FROM Client c
@@ -21,4 +22,5 @@ public interface ClientRepository extends JpaRepository<Client,Long> {
     Optional<Client> findByIdAndEstSupprimeFalse(Long id);
 
     long countByEstSupprimeFalse();
-}
+
+    long countByDateInscriptionBeforeAndEstSupprimeFalse(LocalDateTime date);}
