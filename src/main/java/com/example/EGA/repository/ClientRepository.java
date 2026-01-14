@@ -23,4 +23,7 @@ public interface    ClientRepository extends JpaRepository<Client,Long> {
 
     long countByEstSupprimeFalse();
 
-    long countByDateInscriptionBeforeAndEstSupprimeFalse(LocalDateTime date);}
+    long countByDateInscriptionBeforeAndEstSupprimeFalse(LocalDateTime date);
+
+}
+

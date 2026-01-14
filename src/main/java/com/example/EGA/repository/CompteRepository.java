@@ -23,6 +23,15 @@ public interface CompteRepository extends JpaRepository<Compte, String> {
     Optional<Compte> findByIdAndEstSupprimeFalseAndClientEstSupprimeFalse(String id);
 
     @Query("""
+        SELECT COUNT(cp) 
+        FROM Compte cp 
+        JOIN cp.client c 
+        WHERE cp.estSupprime = false 
+        AND c.estSupprime = false
+    """)
+    long countByEstSupprimeFalseAndClientEstSupprimeFalse();
+
+    @Query("""
         SELECT cp 
         FROM Compte cp 
         WHERE cp.client.id = :clientId 
@@ -34,8 +43,6 @@ public interface CompteRepository extends JpaRepository<Compte, String> {
 
     @Query("SELECT SUM(c.solde) FROM Compte c WHERE c.type = :type AND c.estSupprime = false")
     Double sumSoldeByType(@Param("type") Type type);
-
-    long countByEstSupprimeFalse();
 
     long countByDateCreationBefore(LocalDateTime date);
 

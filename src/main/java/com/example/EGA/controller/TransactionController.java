@@ -1,23 +1,33 @@
 package com.example.EGA.controller;
 
-import com.example.EGA.dto.TransactionDTO;
-import com.example.EGA.entity.Transaction;
-import com.example.EGA.repository.TransactionRepository;
-import com.example.EGA.service.PdfGeneratorService;
-import com.example.EGA.service.TransactionService;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.EGA.dto.TransactionDTO;
+import com.example.EGA.entity.Transaction;
+import com.example.EGA.repository.TransactionRepository;
+import com.example.EGA.service.PdfGeneratorService;
+import com.example.EGA.service.TransactionService;
+
+import jakarta.servlet.http.HttpServletResponse;
+
 @RestController
 @RequestMapping("/transaction")
+@CrossOrigin(origins = "http://localhost:4200")
 public class TransactionController {
     private final TransactionService transactionService;
     private final PdfGeneratorService pdfGeneratorService;
@@ -65,14 +75,14 @@ public class TransactionController {
     @PostMapping("/deposer")
     public ResponseEntity<?> deposer(@RequestBody TransactionDTO dto) {
         transactionService.effectuerDepot(dto.getNumeroCompteDestination(), dto.getSolde());
-        return ResponseEntity.ok("Dépôt réussi");
+        return ResponseEntity.ok("Dépôt effectué avec succès");
     }
 
     //Faire un retrait d'un compte
     @PostMapping("/retirer")
     public ResponseEntity<?> retirer(@RequestBody TransactionDTO dto) {
         transactionService.effectuerRetrait(dto.getNumeroCompteSource(), dto.getSolde());
-        return ResponseEntity.ok("Retrait réussi");
+        return ResponseEntity.ok("Retrait effectué avec succès");
     }
 
     //Faire un virement d'un compte source à un compte destinataire
@@ -83,7 +93,7 @@ public class TransactionController {
                 dto.getNumeroCompteDestination(),
                 dto.getSolde()
         );
-        return ResponseEntity.ok("Virement réussi");
+        return ResponseEntity.ok("Virement effectué avec succès");
     }
 
     //Imprimer le releve d'un compte

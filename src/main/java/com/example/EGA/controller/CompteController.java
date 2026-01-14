@@ -1,17 +1,28 @@
 package com.example.EGA.controller;
 
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.example.EGA.dto.ModifierCompteDTO;
 import com.example.EGA.entity.Compte;
 import com.example.EGA.model.Type;
 import com.example.EGA.repository.CompteRepository;
 import com.example.EGA.service.CompteService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import java.util.List;
 
 @RestController
 @RequestMapping("/")
+@CrossOrigin(origins = "http://localhost:4200")
 public class CompteController {
     private final CompteRepository compteRepository;
 
@@ -26,7 +37,7 @@ public class CompteController {
     public List<Compte> findAll(){
         return compteRepository.findAllByClient();
     }
-
+    
     //Récupérer un compte via son Id
     @GetMapping("/compte/{id}")
     public Compte findById(@PathVariable String id){
@@ -41,15 +52,13 @@ public class CompteController {
     public ResponseEntity<Compte> creerCompte(
             @RequestParam Long id,
             @RequestParam Type type) {
-
         Compte compte = compteService.creerCompte(id, type);
         return ResponseEntity.status(HttpStatus.CREATED).body(compte);
     }
 
     //Modifier un compte
     @PutMapping("/compte/modifier/{id}")
-    public Compte modifier(@RequestBody ModifierCompteDTO dto,
-                           @PathVariable String id) {
+    public Compte modifier(@RequestBody ModifierCompteDTO dto, @PathVariable String id) {
         Compte compte = compteRepository
                 .findByIdAndEstSupprimeFalseAndClientEstSupprimeFalse(id)
                 .orElseThrow(() ->

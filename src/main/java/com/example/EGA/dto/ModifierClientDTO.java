@@ -15,6 +15,4 @@ public class ModifierClientDTO {
     private String email;
     private String telephone;
     private String nationalite;
-    private Sexe sexe;
-    private LocalDateTime dateNaissance;
 }
