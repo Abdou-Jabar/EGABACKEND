@@ -46,6 +46,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             "LEFT JOIN FETCH cs.client " +
             "LEFT JOIN FETCH t.compteDestination cd " +
             "LEFT JOIN FETCH cd.client " +
-            "ORDER BY t.dateTransaction DESC")
+            "ORDER BY t.dateTransaction DESC" +
+            " LIMIT 3")
     List<Transaction> findTop4WithClientInfo();
 }
