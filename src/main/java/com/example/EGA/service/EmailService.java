@@ -1,8 +1,12 @@
 package com.example.EGA.service;
 
 import com.example.EGA.entity.Compte;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -100,6 +104,28 @@ public class EmailService {
         );
 
         mailSender.send(msgDest);
+    }
+
+    @Async
+    public void envoyerReleveParEmail(String toEmail, String clientName, String numeroCompte, byte[] pdfContent) throws MessagingException {
+        MimeMessage message = mailSender.createMimeMessage();
+
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+        helper.setFrom("EGABank <egabank@gmail.com>");
+        helper.setTo(toEmail);
+        helper.setSubject("Votre Relevé de Compte EGA BANK - " + numeroCompte);
+
+        String contenu = "Bonjour " + clientName + ",\n\n" +
+                "Veuillez trouver ci-joint l'historique de vos opérations pour le compte : " + numeroCompte + ".\n\n" +
+                "Merci de votre confiance.\n\n" +
+                "L'équipe EGA BANK.";
+
+        helper.setText(contenu);
+
+        helper.addAttachment("releve_" + numeroCompte + ".pdf", new ByteArrayResource(pdfContent));
+
+        mailSender.send(message);
     }
 }
 

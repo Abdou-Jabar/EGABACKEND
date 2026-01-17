@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -18,8 +19,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.EGA.dto.TransactionDTO;
+import com.example.EGA.entity.Compte;
 import com.example.EGA.entity.Transaction;
 import com.example.EGA.repository.TransactionRepository;
+import com.example.EGA.service.EmailService;
 import com.example.EGA.service.PdfGeneratorService;
 import com.example.EGA.service.TransactionService;
 
@@ -32,11 +35,13 @@ public class TransactionController {
     private final TransactionService transactionService;
     private final PdfGeneratorService pdfGeneratorService;
     private final TransactionRepository transactionRepository;
+    private final EmailService emailService;
 
-    public TransactionController(TransactionService transactionService, PdfGeneratorService pdfGeneratorService, TransactionRepository transactionRepository) {
+    public TransactionController(TransactionService transactionService, PdfGeneratorService pdfGeneratorService, TransactionRepository transactionRepository, EmailService emailService) {
         this.transactionService = transactionService;
         this.pdfGeneratorService = pdfGeneratorService;
         this.transactionRepository = transactionRepository;
+        this.emailService = emailService;
     }
 
     //Lister toutes les transactions
@@ -132,5 +137,39 @@ public class TransactionController {
         List<Transaction> transactions = transactionService.obtenirReleveParPeriode(numeroCompte, debut, fin);
 
         pdfGeneratorService.generateRelevePdfByPeriod(transactions, numeroCompte, response);
+    }
+
+    @PostMapping("/releve/envoyer/{numeroCompte}") // Ajoute {numeroCompte} ici
+    public ResponseEntity<Map<String, String>> envoyerReleve(
+            @PathVariable String numeroCompte) { // Change @RequestParam en @PathVariable
+        try {
+            List<Transaction> transactions = transactionService.obtenirReleve(numeroCompte);
+
+            if (transactions.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("message", "Aucune transaction trouvée pour ce compte."));
+            }
+
+            // Récupération sécurisée du client
+            Transaction premiereTrans = transactions.get(0);
+            Compte compteTitulaire = (premiereTrans.getCompteSource() != null &&
+                    premiereTrans.getCompteSource().getId().equals(numeroCompte))
+                    ? premiereTrans.getCompteSource()
+                    : premiereTrans.getCompteDestination();
+
+            byte[] pdfBytes = pdfGeneratorService.generateRelevePdfBytes(transactions, numeroCompte);
+
+            emailService.envoyerReleveParEmail(
+                    compteTitulaire.getClient().getEmail(),
+                    compteTitulaire.getClient().getPrenom() + " " + compteTitulaire.getClient().getNom(),
+                    numeroCompte,
+                    pdfBytes
+            );
+
+            return ResponseEntity.ok(Map.of("message", "Le relevé a été envoyé avec succès."));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "Erreur : " + e.getMessage()));
+        }
     }
 }
