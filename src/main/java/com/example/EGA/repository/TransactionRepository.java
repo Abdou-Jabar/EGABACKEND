@@ -16,7 +16,10 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
            WHERE (t.compteSource.id = :num OR t.compteDestination.id = :num)
            ORDER BY t.dateTransaction DESC
           \s""")
-    List<Transaction> findReleve(String num);
+    List<Transaction> findReleve(String num); 
+
+    @Query("SELECT t FROM Transaction t ORDER BY t.dateTransaction DESC")
+    List<Transaction> findSorted();
 
     @Query("""
            SELECT t FROM Transaction t\s
@@ -46,7 +49,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             "LEFT JOIN FETCH cs.client " +
             "LEFT JOIN FETCH t.compteDestination cd " +
             "LEFT JOIN FETCH cd.client " +
-            "ORDER BY t.dateTransaction DESC" +
-            " LIMIT 3")
+            "ORDER BY t.dateTransaction DESC " +
+            "LIMIT 3")
     List<Transaction> findTop4WithClientInfo();
 }

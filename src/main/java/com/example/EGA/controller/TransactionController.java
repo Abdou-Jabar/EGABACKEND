@@ -47,7 +47,7 @@ public class TransactionController {
     //Lister toutes les transactions
     @GetMapping("/all")
     public List<Transaction> getAllTransactions() {
-        return transactionRepository.findAll();
+        return transactionRepository.findSorted();
     }
 
     //Lister toutes les transactions d'un compte
@@ -102,9 +102,9 @@ public class TransactionController {
     }
 
     //Imprimer le releve d'un compte
-    @GetMapping("/releve/pdf")
+    @GetMapping("/releve/pdf/{numeroCompte}")
     public void imprimerRelevePdf(
-            @RequestParam String numeroCompte,
+            @PathVariable String numeroCompte,
             HttpServletResponse response) throws IOException {
 
         response.setContentType("application/pdf");
@@ -139,9 +139,8 @@ public class TransactionController {
         pdfGeneratorService.generateRelevePdfByPeriod(transactions, numeroCompte, response);
     }
 
-    @PostMapping("/releve/envoyer/{numeroCompte}") // Ajoute {numeroCompte} ici
-    public ResponseEntity<Map<String, String>> envoyerReleve(
-            @PathVariable String numeroCompte) { // Change @RequestParam en @PathVariable
+    @PostMapping("/releve/envoyer/{numeroCompte}")
+    public ResponseEntity<Map<String, String>> envoyerReleve(@PathVariable String numeroCompte) {
         try {
             List<Transaction> transactions = transactionService.obtenirReleve(numeroCompte);
 
