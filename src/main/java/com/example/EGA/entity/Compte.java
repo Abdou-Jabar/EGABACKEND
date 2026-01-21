@@ -30,14 +30,15 @@ public class Compte {
     @Column(name = "date_creation", nullable = false, updatable = false)
     private LocalDateTime dateCreation;
 
-    @Column(name = "est_supprime")
+    @Column(name = "est_supprime", nullable = false)
     private boolean estSupprime;
 
     @Column(name = "solde", nullable = false)
     private Double solde = 0.0;
 
     @PrePersist
-    protected void onCreate(){
+    protected void prePersist() {
+        this.estSupprime = false;
         this.dateCreation = LocalDateTime.now();
     }
 

@@ -127,5 +127,48 @@ public class EmailService {
 
         mailSender.send(message);
     }
+
+    @Async
+    public void envoyerEmailBienvenueAdmin(String to, String prenom, String username, String password, String role) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("EGABank <egabank@gmail.com>");
+        message.setTo(to);
+        message.setSubject("Accès Administratif EGABank - Vos identifiants");
+
+        String roleLabel = role.replace("_", " "); // Pour un affichage plus propre (ex: SUPER ADMIN)
+
+        message.setText(
+                "Bonjour " + prenom + ",\n\n" +
+                        "Un compte administrateur vous a été créé sur la plateforme EGABank.\n\n" +
+                        "Voici vos accès confidentiels :\n" +
+                        "----------------------------------\n" +
+                        "Rôle : " + roleLabel + "\n" +
+                        "Nom d'utilisateur : " + username + "\n" +
+                        "Mot de passe provisoire : " + password + "\n" +
+                        "----------------------------------\n\n" +
+                        "Pour des raisons de sécurité, nous vous conseillons de changer votre mot de passe dès votre première connexion.\n\n" +
+                        "Cordialement,\n" +
+                        "La Direction Technique EGA"
+        );
+        mailSender.send(message);
+    }
+
+    @Async
+    public void envoyerEmailResetPassword(String to, String prenom, String newPassword) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("EGABank <egabank@gmail.com>");
+        message.setTo(to);
+        message.setSubject("Réinitialisation de votre mot de passe - EGABank");
+
+        message.setText(
+                "Bonjour " + prenom + ",\n\n" +
+                        "Votre mot de passe a été réinitialisé par un administrateur système.\n\n" +
+                        "Votre nouveau mot de passe est : " + newPassword + "\n\n" +
+                        "Si vous n'êtes pas à l'origine de cette demande, veuillez contacter immédiatement le support.\n\n" +
+                        "Cordialement,\n" +
+                        "EGABank"
+        );
+        mailSender.send(message);
+    }
 }
 
