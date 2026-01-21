@@ -1,6 +1,7 @@
 package com.example.EGA.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,18 +42,6 @@ public class AuthController {
     JwtUtil jwtUtils;
     @Autowired
     EmailService emailService;
-    /*@PostMapping("/signin")
-    public String authenticateUser(@RequestBody User user) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        user.getUsername(),
-                        user.getPassword()
-                )
-        );
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return jwtUtils.generateToken(userDetails.getUsername());
-    }*/
-
 
     @PostMapping("/signin")
     public JwtResponse authenticateUser(@RequestBody User user) {
@@ -59,13 +49,14 @@ public class AuthController {
                 new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
         );
         String jwt = jwtUtils.generateToken(user.getUsername());
-        User userDetails = userRepository.findByUsername(user.getUsername());
+        User userDetails = userRepository.findByUsername(user.getUsername()).orElseThrow();
         return new JwtResponse(
                 jwt,
                 userDetails.getUsername(),
-                userDetails.getNom(), // Assure-toi que ces getters existent dans ton entité User
+                userDetails.getNom(),
                 userDetails.getPrenom(),
-                userDetails.getRole()
+                userDetails.getRole(),
+                userDetails.getEmail()
         );
     }
 
@@ -92,12 +83,11 @@ public class AuthController {
 
         userRepository.save(newUser);
 
-        // 2. Envoi de l'email avec le mot de passe généré
         emailService.envoyerEmailBienvenueAdmin(
                 newUser.getEmail(),
                 newUser.getPrenom(),
                 newUser.getUsername(),
-                passwordClair, // Le mot de passe clair généré
+                passwordClair,
                 newUser.getRole().toString()
         );
 
@@ -120,6 +110,9 @@ public class AuthController {
 
     @PutMapping("/update-password/{id}")
     public ResponseEntity<String> updatePassword(@PathVariable Long id) {
+        if(!userRepository.existsById(id)){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Administrateur introuvable!");
+        }
         return userRepository.findById(id).map(user -> {
             String generatedPassword = generateRandomPassword();
 
@@ -163,12 +156,48 @@ public class AuthController {
     }
 
     private String generateRandomPassword() {
-    String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$";
-    java.security.SecureRandom random = new java.security.SecureRandom();
-    StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < 10; i++) {
-        sb.append(chars.charAt(random.nextInt(chars.length())));
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$";
+        java.security.SecureRandom random = new java.security.SecureRandom();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 10; i++) {
+            sb.append(chars.charAt(random.nextInt(chars.length())));
+        }
+        return sb.toString();
     }
-    return sb.toString();
-}
+
+    @PutMapping("/update-me")
+    public ResponseEntity<String> updateSelf(@RequestBody User updatedData) {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByUsername(currentUsername).orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+
+        user.setNom(updatedData.getNom());
+        user.setPrenom(updatedData.getPrenom());
+        user.setEmail(updatedData.getEmail());
+        user.setNumero(updatedData.getNumero());
+
+        userRepository.save(user);
+
+        return ResponseEntity.ok("Profil mis à jour avec succès !");
+    }
+
+    // 2. Changement de mot de passe
+    @PutMapping("/change-password")
+    public ResponseEntity<String> changePassword(@RequestBody Map<String, String> payload) {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        String oldPassword = payload.get("oldPassword");
+        String newPassword = payload.get("newPassword");
+
+        return userRepository.findByUsername(currentUsername).map(user -> {
+            // VÉRIFICATION : L'ancien mot  de passe est-il correct ?
+            if (!encoder.matches(oldPassword, user.getPassword())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("L'ancien mot de passe est incorrect.");
+            }
+
+            user.setPassword(encoder.encode(newPassword));
+            userRepository.save(user);
+
+            return ResponseEntity.ok("Mot de passe modifié avec succès !");
+        }).orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utilisateur introuvable"));
+    }
 }

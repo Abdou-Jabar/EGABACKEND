@@ -36,7 +36,6 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            // 1. Activer et configurer le CORS
             .cors(cors -> cors.configurationSource(request -> {
                 var corsConfiguration = new org.springframework.web.cors.CorsConfiguration();
                 corsConfiguration.setAllowedOrigins(java.util.List.of("http://localhost:4200"));
@@ -45,7 +44,6 @@ public class WebSecurityConfig {
                 corsConfiguration.setAllowCredentials(true);
                 return corsConfiguration;
             }))
-            // 2. Désactiver le CSRF (nécessaire pour les API stateless avec JWT)
             .csrf(csrf -> csrf.disable()) 
             
             .exceptionHandling(exceptionHandling ->
@@ -56,7 +54,7 @@ public class WebSecurityConfig {
             )
             .authorizeHttpRequests(authorizeRequests ->
                     authorizeRequests
-                            .requestMatchers("/auth/signin").permitAll()
+                            .requestMatchers("/auth/**").permitAll()
                             .anyRequest().authenticated()
             );
 
