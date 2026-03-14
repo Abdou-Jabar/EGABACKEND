@@ -1,6 +1,14 @@
 # EGA Backend
 
-API backend Spring Boot pour une application bancaire (gestion des clients, comptes, transactions, dashboard et authentification JWT).
+Backend Spring Boot d’une application bancaire (gestion clients/comptes/transactions, authentification JWT, dashboard, PDF et e-mail).
+
+## ✅ Ce qui a été fait
+
+- Mise en place d’une documentation projet claire et centralisée.
+- Ajout des instructions d’installation et d’exécution (local + Docker).
+- Ajout d’un aperçu des endpoints REST disponibles.
+- Ajout des informations de configuration essentielles (DB, JWT, e-mail).
+- Ajout des commandes de build et de test.
 
 ## Stack technique
 
@@ -15,17 +23,14 @@ API backend Spring Boot pour une application bancaire (gestion des clients, comp
 
 ## Fonctionnalités principales
 
-- Authentification administrateur avec JWT (`/auth/signin`)
-- Gestion des administrateurs (`/auth/signup`, mise à jour, suppression, reset mot de passe)
-- Gestion des clients (CRUD logique)
-- Gestion des comptes (CRUD logique)
-- Opérations de transaction:
-  - dépôt
-  - retrait
-  - virement
+- Authentification administrateur (`/auth/signin`) avec JWT
+- Gestion des administrateurs
+- Gestion des clients
+- Gestion des comptes
+- Transactions: dépôt, retrait, virement
 - Génération de relevés PDF
-- Envoi d’e-mails (welcome, reset mot de passe, relevés)
-- Endpoint dashboard synthétique (`/dashboard`)
+- Envoi d’e-mails (bienvenue, reset mot de passe, relevés)
+- Dashboard (`/dashboard`)
 
 ## Structure du projet
 
@@ -33,27 +38,27 @@ API backend Spring Boot pour une application bancaire (gestion des clients, comp
 src/main/java/com/example/EGA
 ├── controller     # Endpoints REST
 ├── service        # Logique métier
-├── repository     # Accès base de données (JPA)
-├── entity         # Entités métier
+├── repository     # Accès BD (JPA)
+├── entity         # Entités
 ├── dto            # Objets de transfert
-├── security       # JWT + configuration Spring Security
+├── security       # JWT + sécurité Spring
 ├── cron           # Tâches planifiées
-└── model          # Enums / modèles
+└── model          # Enums
 ```
 
 ## Prérequis
 
 - Java 17+
 - Maven 3.9+
-- MySQL 8 (si exécution locale hors Docker)
+- MySQL 8 (si exécution sans Docker)
 
 ## Configuration
 
-Le projet lit sa configuration principale depuis:
+Configuration principale:
 
 - `src/main/resources/application.properties`
 
-Variables sensibles à définir par environnement:
+Variables recommandées par environnement:
 
 - `SPRING_DATASOURCE_URL`
 - `SPRING_DATASOURCE_USERNAME`
@@ -62,19 +67,19 @@ Variables sensibles à définir par environnement:
 - `SPRING_MAIL_USERNAME`
 - `SPRING_MAIL_PASSWORD`
 
-> ⚠️ Recommandation: ne pas versionner de secrets réels en clair, et privilégier des variables d’environnement ou un coffre de secrets.
+> ⚠️ Éviter de versionner des secrets en clair. Préférer des variables d’environnement ou un gestionnaire de secrets.
 
-## Lancer en local (sans Docker)
+## Lancer le projet
+
+### Local
 
 ```bash
 ./mvnw spring-boot:run
 ```
 
-Application disponible sur:
+API disponible sur `http://localhost:8080`.
 
-- `http://localhost:8080`
-
-## Lancer avec Docker Compose
+### Docker Compose
 
 ```bash
 docker compose up --build
@@ -83,9 +88,9 @@ docker compose up --build
 Services:
 
 - API: `http://localhost:8080`
-- MySQL: `localhost:3307` (container `mysql-ega`)
+- MySQL: `localhost:3307`
 
-## Build et tests
+## Build & tests
 
 ```bash
 ./mvnw clean package
@@ -94,12 +99,12 @@ Services:
 
 ## Sécurité
 
-- Les routes `/auth/**` sont publiques.
-- Les autres routes nécessitent un token JWT valide dans l’en-tête `Authorization: Bearer <token>`.
+- `/auth/**` est accessible sans token.
+- Toutes les autres routes nécessitent: `Authorization: Bearer <token>`.
 
-## Endpoints REST (aperçu)
+## Endpoints (aperçu)
 
-### Authentification et admins (`/auth`)
+### Auth (`/auth`)
 
 - `POST /auth/signin`
 - `POST /auth/signup`
@@ -142,8 +147,3 @@ Services:
 ### Dashboard
 
 - `GET /dashboard`
-
-## Notes
-
-- Ce fichier donne une vue d’ensemble orientée démarrage rapide.
-- Pour les schémas JSON exacts des requêtes/réponses, se référer aux DTO et contrôleurs du dossier `src/main/java/com/example/EGA`.
