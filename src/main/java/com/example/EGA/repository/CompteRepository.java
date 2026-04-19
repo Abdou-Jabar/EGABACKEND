@@ -1,14 +1,16 @@
 package com.example.EGA.repository;
 
-import com.example.EGA.entity.Compte;
-import com.example.EGA.model.Type;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import com.example.EGA.entity.Compte;
+import com.example.EGA.model.Type;
+
 
 public interface CompteRepository extends JpaRepository<Compte, String> {
     @Query("""
@@ -26,11 +28,10 @@ public interface CompteRepository extends JpaRepository<Compte, String> {
         SELECT COUNT(cp) 
         FROM Compte cp 
         JOIN cp.client c 
-        WHERE cp.estSupprime = false 
+        WHERE cp.estSupprime = false
         AND c.estSupprime = false
     """)
     long countByEstSupprimeFalseAndClientEstSupprimeFalse();
-
     @Query("""
         SELECT cp 
         FROM Compte cp 

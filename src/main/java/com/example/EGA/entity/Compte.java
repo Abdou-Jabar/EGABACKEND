@@ -44,7 +44,6 @@ public class Compte {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id")
-    @JsonIgnoreProperties({"comptes", "autreChampASupprimer"})
+    @JsonIgnoreProperties("comptes")
     private Client client;
-
 }

@@ -41,7 +41,6 @@ public class User {
     private String username;
 
     @Column(name = "numero", nullable = false)
-    @Pattern(regexp = "^(?:\\\\+228\\\\s?)?\\\\d{8}$", message = "Numéro de téléphone invalide")
     private String numero;
 
     @Column(name = "password", nullable = false)

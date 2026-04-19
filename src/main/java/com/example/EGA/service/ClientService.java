@@ -1,11 +1,13 @@
 package com.example.EGA.service;
 
+import org.springframework.stereotype.Service;
+
 import com.example.EGA.entity.Client;
 import com.example.EGA.entity.Compte;
 import com.example.EGA.model.Type;
 import com.example.EGA.repository.ClientRepository;
+
 import jakarta.transaction.Transactional;
-import org.springframework.stereotype.Service;
 
 @Service
 public class ClientService {
