@@ -23,6 +23,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class Transaction {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -33,7 +34,7 @@ public class Transaction {
     private Double montant;
 
     @NotNull
-    @Column(name = "date_transaction",  nullable = false, updatable = false)
+    @Column(name = "date_transaction", nullable = false, updatable = false)
     private LocalDateTime dateTransaction;
 
     @Enumerated(EnumType.STRING)
@@ -41,10 +42,10 @@ public class Transaction {
     private TypeTransaction type;
 
     @ManyToOne
-    @JoinColumn(name = "compte_source_id", updatable = false, nullable = false)
+    @JoinColumn(name = "compte_source_id", updatable = false, nullable = true)
     private Compte compteSource;
 
     @ManyToOne
-    @JoinColumn(name = "compte_destination_id", updatable = false, nullable = false)
+    @JoinColumn(name = "compte_destination_id", updatable = false, nullable = true)
     private Compte compteDestination;
 }

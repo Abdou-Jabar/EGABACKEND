@@ -29,9 +29,9 @@ public class ClientService {
     }
 
     @Transactional
-    public Client creerClientAvecCompte(Client client, Type typeCompte) {
+    public Client creerClientAvecCompte(Client client, Type typeCompte, String motDePasse) {
         Client savedClient = clientRepository.save(client);
-        compteService.creerCompte(savedClient.getId(), typeCompte);
+        compteService.creerCompte(savedClient.getId(), typeCompte, motDePasse);
         return savedClient;
     }
 }

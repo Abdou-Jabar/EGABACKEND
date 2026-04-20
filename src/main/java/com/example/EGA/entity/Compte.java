@@ -1,7 +1,6 @@
 package com.example.EGA.entity;
 
 import com.example.EGA.model.Type;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -11,7 +10,6 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-
 @Entity
 @Getter
 @Setter
@@ -19,6 +17,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Table(name = "compte")
 public class Compte {
+
     @Id
     @Column(length = 34)
     private String id;
@@ -35,6 +34,9 @@ public class Compte {
 
     @Column(name = "solde", nullable = false)
     private Double solde = 0.0;
+
+    @Column(name = "mot_de_passe", nullable = false)
+    private String motDePasse;
 
     @PrePersist
     protected void prePersist() {

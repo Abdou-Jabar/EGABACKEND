@@ -9,12 +9,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.EGA.dto.AjouterCompteDTO;
 import com.example.EGA.dto.ModifierClientDTO;
 import com.example.EGA.entity.Client;
 import com.example.EGA.entity.Compte;
+import com.example.EGA.model.Type;
 import com.example.EGA.repository.ClientRepository;
 import com.example.EGA.repository.CompteRepository;
 import com.example.EGA.service.ClientService;
@@ -49,10 +50,13 @@ public class ClientController {
     }
 
     @PostMapping("/client/ajouter")
-    public Client ajouter(@RequestBody AjouterCompteDTO dto){
+    public Client ajouter(@RequestBody Client client,
+                          @RequestParam Type typeCompte,
+                          @RequestParam String motDePasse) {
         return clientService.creerClientAvecCompte(
-                dto.getClient(),
-                dto.getTypeCompte()
+                client,
+                typeCompte,
+                motDePasse
         );
     }
 
