@@ -6,10 +6,14 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres.vicuxzdqtqhiozotrevg:egabackendDJ@bar00@aws-0-eu-west-1.pooler.supabase.com:6543/postgres
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://aws-0-eu-west-1.pooler.supabase.com:6543/postgres
+      - SPRING_DATASOURCE_USERNAME=postgres.vicuxzdqtqhiozotrevg
+      - SPRING_DATASOURCE_PASSWORD=egabackendDJ@bar00
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
       - SUPER_ADMIN_USERNAME=superadmin
       - SUPER_ADMIN_PASSWORD=SuperAdminSecurePassword123!
+      - SPRING_MAIL_HOST=smtp.gmail.com
+      - SPRING_MAIL_PORT=587
       - SUPER_ADMIN_EMAIL=admin@ega.local
       - SUPER_ADMIN_NOM=EGA
       - SUPER_ADMIN_PRENOM=SuperAdmin
