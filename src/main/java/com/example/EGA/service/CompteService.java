@@ -39,11 +39,16 @@ public class CompteService {
         Compte saved = compteRepository.save(compte);
 
         if (client.getEmail() != null && !client.getEmail().isBlank()) {
-            emailService.envoyerCreationCompte(
-                    client.getEmail(),
-                    client.getPrenom(),
-                    iban
-            );
+            try {
+                emailService.envoyerCreationCompte(
+                        client.getEmail(),
+                        client.getPrenom(),
+                        iban
+                );
+            } catch (Exception e) {
+                // L'e-mail a échoué, mais on ne bloque pas la transaction !
+                System.err.println("⚠️ Alerte: Le compte est créé mais l'e-mail n'a pas pu partir : " + e.getMessage());
+            }
         }
 
         return saved;

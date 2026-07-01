@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.EGA.dto.AjouterCompteDTO;
+import com.example.EGA.dto.AjouterClientDTO;
 import com.example.EGA.dto.ModifierClientDTO;
 import com.example.EGA.entity.Client;
 import com.example.EGA.entity.Compte;
@@ -19,12 +19,15 @@ import com.example.EGA.repository.ClientRepository;
 import com.example.EGA.repository.CompteRepository;
 import com.example.EGA.service.ClientService;
 
+import jakarta.validation.Valid;
+
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
 public class ClientController {
     private final ClientRepository clientRepository;
     private final CompteRepository compteRepository;
     private final ClientService clientService;
+
     public ClientController(ClientService clientService, ClientRepository clientRepository, CompteRepository compteRepository) {
         this.clientService = clientService;
         this.clientRepository = clientRepository;
@@ -49,11 +52,20 @@ public class ClientController {
     }
 
     @PostMapping("/client/ajouter")
-    public Client ajouter(@RequestBody AjouterCompteDTO dto){
-        return clientService.creerClientAvecCompte(
-                dto.getClient(),
-                dto.getTypeCompte()
-        );
+    public Client ajouter(@Valid @RequestBody AjouterClientDTO dto) {
+        // On reconstruit l'entité Client à partir des champs du DTO.
+        // C'est le seul moyen de ne pas laisser le client frontend
+        // injecter des champs internes (id, estSupprime, dateInscription, comptes...).
+        Client client = new Client();
+        client.setNom(dto.getNom());
+        client.setPrenom(dto.getPrenom());
+        client.setDateNaissance(dto.getDateNaissance());
+        client.setSexe(dto.getSexe());
+        client.setTelephone(dto.getTelephone());
+        client.setEmail(dto.getEmail());
+        client.setNationalite(dto.getNationalite());
+
+        return clientService.creerClientAvecCompte(client, dto.getTypeCompte());
     }
 
     //Modifier un client

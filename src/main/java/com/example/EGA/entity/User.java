@@ -9,10 +9,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.jspecify.annotations.Nullable;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Entity
 @Table(name = "users")
@@ -41,7 +39,7 @@ public class User {
     private String username;
 
     @Column(name = "numero", nullable = false)
-    @Pattern(regexp = "^(?:\\\\+228\\\\s?)?\\\\d{8}$", message = "Numéro de téléphone invalide")
+    @Pattern(regexp = "^(?:\\+228\\s?)?\\d{8}$", message = "Numéro de téléphone invalide")
     private String numero;
 
     @Column(name = "password", nullable = false)
